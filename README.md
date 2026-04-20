@@ -220,29 +220,8 @@ See [`TODO.md`](TODO.md) for the full task list and
   relative to `L_fold`" for each shell. This powers the early-warning
   traffic-light dashboard keyed to fractions of `L_fold`.
 
----
-
-## Scientific context and validators
-
-The framing and findings in this repo are intended to be validated against
-external subject-matter experts before publication or presentation:
-
-- **Giovanni Perosa** — European XFEL, HOPFEL methodology owner. Confirms
-  the bifurcation framing is scientifically sound.
-- **Prof. Josep Joaquim Masdemont** — UPC/IEEC. Validates the orbital
-  mechanics and per-shell parameter assumptions.
-- **Dr. Tim Flohrer** — Head of the ESA Space Debris Office. Validates
-  debris-population parameters and real-world relevance.
-- **Richard Linares** — MIT ARCLab. Reviews the pySSEM integration plan.
 
 The final demonstration target is **1 June 2026**, when the full multi-shell
 bifurcation diagram and the `L_fold`-keyed early-warning dashboard must run
 in seconds on a laptop for an interactive stakeholder demo.
 
----
-
-## Licence
-
-Not yet licensed — course project. A licence decision will be made jointly
-with ESADE, UPC, IED, and the HOPFEL methodology owner before any external
-release.
