@@ -1,0 +1,52 @@
+{
+  "shells": [
+    {
+      "shell_name": "Shell_A_600km",
+      "altitude_km": 600,
+      "L_default": 200,
+      "L_sweep_min": 0,
+      "L_sweep_max": 2000,
+      "delta_S": 0.02,
+      "delta_D": 0.10,
+      "beta": 1e-5,
+      "gamma": 1e-7,
+      "notes": "Starlink primary belt. Fast atmospheric drag, delta_D >> delta_S. Lower long-term cascade risk due to fast self-cleaning."
+    },
+    {
+      "shell_name": "Shell_B_800km",
+      "altitude_km": 800,
+      "L_default": 100,
+      "L_sweep_min": 0,
+      "L_sweep_max": 1000,
+      "delta_S": 0.005,
+      "delta_D": 0.02,
+      "beta": 1.5e-5,
+      "gamma": 1.5e-7,
+      "notes": "Most historically congested shell. Iridium-Cosmos collision (2009) occurred at 789 km. Fengyun-1C ASAT (2007) at 865 km. Moderate drag."
+    },
+    {
+      "shell_name": "Shell_C_1000km",
+      "altitude_km": 1000,
+      "L_default": 50,
+      "L_sweep_min": 0,
+      "L_sweep_max": 500,
+      "delta_S": 0.001,
+      "delta_D": 0.005,
+      "beta": 1e-5,
+      "gamma": 2e-7,
+      "notes": "Very slow atmospheric drag. Debris persists for decades. Highest long-term Kessler cascade risk. Some researchers argue this altitude is already past the mathematical point of no return."
+    }
+  ],
+  "metadata": {
+    "source": "Order-of-magnitude estimates from Kessler & Cour-Palais (1978) and MOCAT literature. TO BE CALIBRATED against pySSEM outputs in Phase 2.",
+    "units": {
+      "L": "objects/year",
+      "delta_S": "1/year",
+      "delta_D": "1/year",
+      "beta": "1/(objects*year)",
+      "gamma": "1/(objects*year)"
+    },
+    "version": "0.1-synthetic",
+    "last_updated": "2026-04"
+  }
+}
