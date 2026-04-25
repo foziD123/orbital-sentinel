@@ -1,17 +1,30 @@
 """Shell configuration: parameters for a single orbital altitude band.
 
 Implements Task 1 of Module 1 (see TASKS.md and CLAUDE.md). A :class:`ShellConfig`
-bundles the five dynamical parameters of the Kessler-syndrome model plus the
+bundles the dynamical parameters of the Kessler-syndrome model plus the
 altitude metadata needed to interpret them, and validates that the values are
 physically meaningful on construction.
 
-The model (per shell)::
+The default 2-D model (per shell)::
 
     S_dot = L - delta_S * S - beta * S * D
     D_dot = beta * S * D + gamma * D**2 - delta_D * D
 
 where ``L`` is the bifurcation parameter (launch rate). See ``CLAUDE.md`` for
 the full derivation.
+
+The optional 3-species extension (opt-in via ``use_3species=True``) adds a
+derelict population ``R``::
+
+    S_dot = L - delta_S * S - beta * S * D - beta_SR * S * R
+    R_dot = delta_S * S - delta_R * R - beta_RD * R * D
+    D_dot = beta * S * D + beta_SR * S * R + beta_RD * R * D
+            + gamma * D**2 - delta_D * D
+
+The new parameters ``delta_R``, ``beta_SR``, ``beta_RD`` default to zero so
+all 2-D consumers continue to load existing JSON shells unchanged. When
+``use_3species`` is set, additional validation is enforced; see
+:meth:`ShellConfig.__post_init__`.
 
 A loader is provided for the packaged ``data/parameters/shell_defaults.json``
 so downstream modules can obtain the three reference shells (A, B, C) without
@@ -60,6 +73,11 @@ class ShellConfig:
       coupling entirely, which is not a shell we want to reason about.
     * ``altitude_km > 0``.
     * If ``L_sweep_max`` is given it must exceed ``L_sweep_min``.
+    * When ``use_3species`` is True, the additional 3-species fields must be
+      physically consistent: ``delta_S < delta_R < delta_D`` (derelicts sit
+      between active satellites and debris in their drag timescale) and
+      ``beta_SR > 0``, ``beta_RD > 0`` (otherwise the new collision channels
+      are inactive and the 3-species model degenerates to the 2-D one).
 
     A :class:`ValueError` is raised on any violation, naming the offending field.
     """
@@ -71,6 +89,10 @@ class ShellConfig:
     delta_D: float
     beta: float
     gamma: float
+    delta_R: float = 0.0
+    beta_SR: float = 0.0
+    beta_RD: float = 0.0
+    use_3species: bool = False
     L_sweep_min: float = 0.0
     L_sweep_max: float | None = None
     notes: str = ""
@@ -117,6 +139,46 @@ class ShellConfig:
                 f"gamma (Kessler cascade coefficient) must be non-negative "
                 f"(got {self.gamma!r})"
             )
+
+        # The 3-species fields default to zero (no-op for the 2-D model).
+        # We always reject negative values so the constraints below are
+        # symmetric with delta_S / beta / gamma; the additional ordering and
+        # positivity rules only kick in when use_3species is opted into.
+        if self.delta_R < 0:
+            raise ValueError(
+                f"delta_R (derelict decay) must be non-negative "
+                f"(got {self.delta_R!r})"
+            )
+        if self.beta_SR < 0:
+            raise ValueError(
+                f"beta_SR (active-derelict collision rate) must be non-negative "
+                f"(got {self.beta_SR!r})"
+            )
+        if self.beta_RD < 0:
+            raise ValueError(
+                f"beta_RD (derelict-debris collision rate) must be non-negative "
+                f"(got {self.beta_RD!r})"
+            )
+
+        if self.use_3species:
+            if not (self.delta_S < self.delta_R < self.delta_D):
+                raise ValueError(
+                    "When use_3species is True, the derelict decay rate must "
+                    "satisfy delta_S < delta_R < delta_D "
+                    f"(got delta_S={self.delta_S!r}, delta_R={self.delta_R!r}, "
+                    f"delta_D={self.delta_D!r}); derelicts deorbit slower than "
+                    "fragments but faster than active satellites."
+                )
+            if self.beta_SR <= 0:
+                raise ValueError(
+                    "When use_3species is True, beta_SR (active-derelict "
+                    f"collision rate) must be positive (got {self.beta_SR!r})"
+                )
+            if self.beta_RD <= 0:
+                raise ValueError(
+                    "When use_3species is True, beta_RD (derelict-debris "
+                    f"collision rate) must be positive (got {self.beta_RD!r})"
+                )
 
         if self.L_sweep_min < 0:
             raise ValueError(

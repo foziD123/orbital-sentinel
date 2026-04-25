@@ -120,6 +120,123 @@ def test_gamma_zero_is_allowed() -> None:
 
 
 # ---------------------------------------------------------------------------
+# 3-species opt-in (use_3species=True) — Step 1 of the 3-species extension
+# ---------------------------------------------------------------------------
+
+
+def _valid_3species_kwargs(**overrides: object) -> dict[str, object]:
+    """Baseline 3-species kwargs with delta_S < delta_R < delta_D and
+    beta_SR / beta_RD strictly positive. Override any field per test."""
+    base = _valid_kwargs()
+    # Pick delta_R as the midpoint of (delta_S, delta_D) to satisfy the
+    # ordering constraint by default.
+    base.update(
+        {
+            "delta_R": 0.5 * (base["delta_S"] + base["delta_D"]),  # type: ignore[operator]
+            "beta_SR": 2.0 * base["beta"],  # type: ignore[operator]
+            "beta_RD": 3.0 * base["beta"],  # type: ignore[operator]
+            "use_3species": True,
+        }
+    )
+    base.update(overrides)
+    return base
+
+
+def test_3species_valid_construction_ok() -> None:
+    shell = ShellConfig(**_valid_3species_kwargs())  # type: ignore[arg-type]
+
+    assert shell.use_3species is True
+    assert shell.delta_S < shell.delta_R < shell.delta_D
+    assert shell.beta_SR > 0.0
+    assert shell.beta_RD > 0.0
+
+
+def test_3species_defaults_off_when_not_requested() -> None:
+    """Without ``use_3species=True`` the new fields default to no-op zeros."""
+    shell = ShellConfig(**_valid_kwargs())  # type: ignore[arg-type]
+
+    assert shell.use_3species is False
+    assert shell.delta_R == 0.0
+    assert shell.beta_SR == 0.0
+    assert shell.beta_RD == 0.0
+
+
+def test_3species_off_does_not_constrain_new_fields() -> None:
+    """``delta_R < delta_S`` is meaningless when use_3species is False, and
+    must therefore NOT raise — otherwise existing 2-D consumers that happen
+    to set the field for unrelated reasons would break."""
+    shell = ShellConfig(
+        **_valid_kwargs(  # type: ignore[arg-type]
+            delta_R=0.001,  # below delta_S=0.005 — would be illegal in 3-species
+            beta_SR=0.0,    # zero — would be illegal in 3-species
+            beta_RD=0.0,    # zero — would be illegal in 3-species
+            use_3species=False,
+        )
+    )
+    assert shell.delta_R == pytest.approx(0.001)
+
+
+@pytest.mark.parametrize(
+    ("delta_R", "match"),
+    [
+        (0.005, "delta_R"),     # equal to delta_S — strict inequality required
+        (0.002, "delta_R"),     # below delta_S
+        (0.02, "delta_R"),      # equal to delta_D
+        (0.05, "delta_R"),      # above delta_D
+    ],
+)
+def test_3species_delta_R_outside_band_raises(
+    delta_R: float, match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        ShellConfig(**_valid_3species_kwargs(delta_R=delta_R))  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("field_name", "bad_value", "match"),
+    [
+        ("beta_SR", 0.0, "beta_SR"),
+        ("beta_SR", -1e-5, "beta_SR"),
+        ("beta_RD", 0.0, "beta_RD"),
+        ("beta_RD", -1e-5, "beta_RD"),
+    ],
+)
+def test_3species_beta_couplings_must_be_positive(
+    field_name: str, bad_value: float, match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        ShellConfig(**_valid_3species_kwargs(**{field_name: bad_value}))  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("field_name", "bad_value", "match"),
+    [
+        ("delta_R", -0.001, "delta_R"),
+        ("beta_SR", -1e-7, "beta_SR"),
+        ("beta_RD", -1e-7, "beta_RD"),
+    ],
+)
+def test_3species_fields_reject_negative_even_when_off(
+    field_name: str, bad_value: float, match: str
+) -> None:
+    """Negative values are rejected whether or not 3-species is opted in.
+    The conditional rules are about strict positivity / ordering; basic
+    non-negativity is universal, mirroring delta_S / delta_D / gamma."""
+    with pytest.raises(ValueError, match=match):
+        ShellConfig(**_valid_kwargs(**{field_name: bad_value}))  # type: ignore[arg-type]
+
+
+def test_3species_default_shells_load_as_2D() -> None:
+    """The packaged JSON contains no 3-species fields, so default_shells()
+    must continue to return 2-D-only configs (use_3species=False)."""
+    shells = load_shell_defaults()
+    assert all(s.use_3species is False for s in shells)
+    assert all(s.delta_R == 0.0 for s in shells)
+    assert all(s.beta_SR == 0.0 for s in shells)
+    assert all(s.beta_RD == 0.0 for s in shells)
+
+
+# ---------------------------------------------------------------------------
 # Loader
 # ---------------------------------------------------------------------------
 
