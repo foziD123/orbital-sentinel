@@ -23,24 +23,35 @@ orbital-sentinel/
 ├── TODO.md                    ← current task list and status
 ├── TASKS.md                   ← full technical task breakdown (Module 1)
 ├── VALIDATION.md              ← tests, validation scenarios, acceptance criteria
+├── README.md                  ← project overview / quick start
 ├── bifurcation_engine/
 │   ├── src/
-│   │   ├── model.py           ← ODE system: S_dot, D_dot per shell
-│   │   ├── fixed_points.py    ← Newton continuation solver
-│   │   ├── eigenvalues.py     ← Jacobian + eigenvalue tracker
-│   │   ├── hopf_detector.py   ← Hopf bifurcation detection logic
+│   │   ├── model.py           ← ODE system: 2-D (S, D) + 3-species (S, R, D)
+│   │   ├── fixed_points.py    ← Newton continuation, 2-D + 3-D all-branch
+│   │   ├── eigenvalues.py     ← Jacobian + eigenvalue tracker, 2-D + 3-D
+│   │   ├── hopf_detector.py   ← Hopf detection + saddle-node fold detector
 │   │   ├── integrator.py      ← Full nonlinear trajectory integration
 │   │   ├── early_warning.py   ← Critical slowing down, variance, autocorrelation
-│   │   └── shell_config.py    ← Altitude shell definitions and parameters
+│   │   └── shell_config.py    ← Altitude shell definitions (2-D defaults; opt-in 3-D)
 │   ├── tests/
-│   │   ├── test_model.py
-│   │   ├── test_fixed_points.py
+│   │   ├── test_model.py / test_model_3species.py
+│   │   ├── test_fixed_points.py / test_fixed_points_3species.py
+│   │   ├── test_eigenvalues.py / test_eigenvalues_3species.py
 │   │   ├── test_hopf_detector.py
 │   │   ├── test_early_warning.py
+│   │   ├── test_integrator.py
+│   │   ├── test_shell_config.py
 │   │   └── test_validation_scenarios.py
 │   ├── notebooks/
 │   │   └── engine_demo.ipynb  ← interactive exploration notebook
 │   └── requirements.txt
+├── scripts/
+│   ├── plot_shell_B_bifurcation.py  ← 2-D Shell-B presentation plot
+│   └── run_3species_pipeline.py     ← 3-species sweep on all default shells
+├── reports/
+│   ├── shell_B_bifurcation.png
+│   ├── task4_5_summary.md           ← 2-D pipeline outcome
+│   └── 3species_pipeline_summary.md ← 3-species pipeline outcome
 └── data/
     └── parameters/
         └── shell_defaults.json  ← default parameter sets per altitude band
@@ -147,6 +158,113 @@ the Hopf sense. Task 7 early-warning indicators (critical slowing down,
 variance inflation, autocorrelation → 1) still apply — those signatures
 precede saddle-node folds just as they do Hopf bifurcations — and the
 traffic-light thresholds can be phrased as fractions of `L_fold`.
+
+---
+
+## 3-Species Extension — Results and Mathematical Findings
+
+After the 2-D pipeline confirmed the fold-over-Hopf preference, the engine
+was extended additively to a 3-species (S, R, D) system that mirrors the
+MOCAT-pySSEM structure: active satellites `S`, derelict satellites `R`, and
+debris fragments `D`. The intent was to give the Jacobian an additional
+degree of freedom so a complex pair could potentially cross the imaginary
+axis on a stable branch — i.e. host a genuine Hopf — before the lower
+coexistence branch ends in a fold.
+
+### Architecture (additive — 2-D pipeline is unchanged)
+
+`use_3species` defaults to `False` on `ShellConfig`, so the 2-D model
+remains the primary pipeline. All 113 pre-existing 2-D tests continue to
+pass with no edits. The new symbols are:
+
+- `model.py`: `s_dot_3species`, `r_dot_3species`, `d_dot_3species`, `ode_system_3species` (state vector `y = [S, R, D]`).
+- `fixed_points.py`: `find_fixed_points_3species` (grid-seeded `fsolve` with dedup and physicality filter) and `continuation_sweep_3species` (warm-started **all-branch** tracking with grid rescan to spawn new branches).
+- `eigenvalues.py`: `jacobian_3species` (3×3 analytical), `eigenvalue_analysis_3species` (classifies the dominant complex pair), `track_eigenvalues_3species` (per-branch sweep, `detect_hopf`-compatible aliases).
+- `shell_config.py`: optional fields `delta_R`, `beta_SR`, `beta_RD` plus a `use_3species` opt-in flag with conditional validation (`delta_S < delta_R < delta_D`, strict positivity of the new collision rates only when the flag is set).
+- `scripts/run_3species_pipeline.py`: applies the recipe (`delta_R = ½(δ_S + δ_D)`, `β_SR = 2β`, `β_RD = 3β`) to all three default shells and writes `reports/3species_pipeline_summary.md`.
+
+### The 3-species ODE
+
+```
+S_dot = L − δ_S·S − β·S·D − β_SR·S·R
+R_dot = δ_S·S − δ_R·R − β_RD·R·D
+D_dot = β·S·D + β_SR·S·R + β_RD·R·D + γ·D² − δ_D·D
+```
+
+**Modelling note (deliberate asymmetry).** `R_dot` does *not* contain a
+`-β_SR·S·R` term: an active-derelict collision destroys the active satellite
+(visible in `S_dot`) and produces fragments (visible in `D_dot`), but the
+derelict body is treated as not removed. This is the spec as written and
+is reflected exactly in the Jacobian — `J[1,1] = −δ_R − β_RD·D*`, with no
+`−β_SR·S*` term.
+
+### What the 3-species pipeline found
+
+Running the recipe above on Shells A, B, and C with 200 L points across
+each shell's full sweep window:
+
+- **No Hopf bifurcation on any branch on any shell.**
+- Lower coexistence branches: `complex_no_crossing` — complex pairs *do* appear (more frequently than in the 2-D model), but `α` stays strictly negative in the complex region. The spiral is stable everywhere it is a spiral.
+- Upper coexistence branches: `no_complex_eigenvalues` — saddle-like real spectrum throughout, consistent with the 2-D upper branch.
+- The **saddle-node fold survives in 3-D**, just at slightly different `L_fold` values because the new collision channels reshape the equilibrium surface.
+
+Full per-branch table is in `reports/3species_pipeline_summary.md`.
+
+### Why the fold beats the Hopf — a structural result
+
+All 9 entries of `jacobian_3species` were verified analytically from the
+ODE; the closed form is
+
+```
+J_3 = [[ −δ_S − β·D* − β_SR·R*,   −β_SR·S*,             −β·S*                          ],
+       [  δ_S,                     −δ_R − β_RD·D*,       −β_RD·R*                       ],
+       [  β·D* + β_SR·R*,           β_SR·S* + β_RD·D*,    β·S* + β_RD·R* + 2γ·D* − δ_D ]]
+```
+
+The trace `tr(J_3) = J_00 + J_11 + J_22` simplifies to a key inequality:
+
+```
+tr(J_3) = −(δ_S + δ_R + δ_D)              [decay sinks — always negative]
+          + β·(S* − D*)                    [satellite-debris balance]
+          + β_RD·(R* − D*)                 [derelict-debris balance]
+          − β_SR·R*                         [active-derelict — one-sided]
+          + 2γ·D*                           [Kessler self-cascade — grows with D*]
+```
+
+This is **the mathematical reason the fold beats the Hopf in the source-sink
+model class.** As `L → L_fold` along the lower branch, `D*` grows
+square-root-steeply and the `2γ·D*` Kessler term drives the trace toward
+zero from below and then positive. Since `tr(J_3) > 0` is sufficient for
+instability (it forces at least one eigenvalue real part to be positive),
+the fixed point becomes unstable through the **trace mechanism** — and
+this happens at the *same* L (the fold) at which the lower branch ceases
+to exist. The fold and the trace instability fire simultaneously; there
+is no window in which a complex pair can cross zero on a *still-existing*
+stable branch. Targeted parameter exploration is therefore unlikely to
+unlock a Hopf in this model class — the fold-over-Hopf preference is
+structural in 3-D as well as in 2-D.
+
+### Decision: fold is the Kessler tipping point
+
+The project commits to the saddle-node fold as the operational definition
+of the Kessler tipping point. The HOPFEL methodology transfers correctly
+— bifurcation theory applied to orbital debris dynamics correctly
+identifies a critical transition; that transition just happens to be a
+fold rather than a Hopf. Module 3 (dashboard) red-line thresholds are
+keyed to `L_fold`. Task 7 (early warning) is implemented with the fold
+as the primary channel; Hopf-based warning is a placeholder secondary
+channel only — there is no 3-D Hopf to warn about in this model class.
+
+The 3-species pipeline remains in the codebase as scientific evidence for
+this conclusion and as the harness against which any future model
+extension (inter-shell coupling, breakup-model upgrade, etc.) will be
+re-tested for Hopf existence.
+
+### Test status
+
+**159 passed, 2 skipped** — 113 original 2-D tests untouched, plus 46 new
+tests across the four 3-species test files. The two skips remain on the
+T5.2 / T5.3 historical scenarios and are tracked in `TODO.md`.
 
 ---
 

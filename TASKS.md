@@ -268,9 +268,37 @@ def sweep_trajectories_above_Lc(
 
 ## TASK 7 — Early warning indicators (`src/early_warning.py`)
 
-**Goal:** Compute the three early-warning signals that precede a Hopf bifurcation.
+**Goal:** Compute the three early-warning signals that precede the
+Kessler tipping point.
 
-These signals appear as the system approaches L_c from below (alpha → 0):
+**Primary channel — fold-based (`L_fold`).** The 2-D source-sink model
+admits no Hopf bifurcation, and the additive 3-species extension
+confirmed the same outcome on every shell on every branch (see
+`reports/3species_pipeline_summary.md` and the trace analysis in
+CLAUDE.md). The Kessler tipping point in this model class is therefore
+the **saddle-node fold** detected by `detect_fold` in
+`hopf_detector.py`, and Task 7 implements early warning for that fold:
+
+- the leading eigenvalue real part `α(L)` along the stable lower branch
+  approaches zero from below as `L → L_fold`, so `1 / |α|` diverges
+  exactly as it would for a Hopf bifurcation;
+- the rolling variance and lag-1 autocorrelation of `D(t)` similarly
+  inflate near the fold, because the same critical-slowing-down
+  phenomenology applies to any codimension-1 bifurcation.
+
+The traffic-light thresholds are keyed to `L_fold`:
+- `green` if `L < 0.80 · L_fold`,
+- `amber` if `0.80 · L_fold ≤ L < 0.95 · L_fold`,
+- `red` if `L ≥ 0.95 · L_fold`.
+
+**Secondary channel — Hopf-based (`L_c`).** The API keeps a Hopf-keyed
+slot for forward compatibility with future model extensions (e.g.
+inter-shell coupling). With the current 2-D and 3-D model classes it
+always reports "not applicable for this shell" because no Hopf locus
+exists.
+
+These signals appear as the system approaches the tipping point from below
+(α → 0 on the stable branch):
 
 ```python
 def critical_slowing_down(
@@ -278,8 +306,11 @@ def critical_slowing_down(
     alpha_array: np.ndarray
 ) -> dict:
     """
-    As L → L_c, alpha → 0, meaning the system recovers more and more slowly
-    from perturbations. The recovery time ~ 1/|alpha| diverges at L_c.
+    As L → L_fold, alpha → 0 along the stable lower branch, meaning the
+    system recovers more and more slowly from perturbations. The recovery
+    time ~ 1/|alpha| diverges at L_fold (same critical-slowing-down
+    phenomenology that would precede a Hopf, applied to the saddle-node
+    fold this model actually exhibits).
     Returns: {'L': array, 'recovery_time': array}
     recovery_time[i] = 1 / |alpha[i]| (clip at some maximum for display)
     """
@@ -308,14 +339,23 @@ def autocorrelation_indicator(
 def early_warning_summary(
     params: ShellConfig,
     L_values: np.ndarray,
-    hopf_result: HopfResult
+    fold_result: FoldResult,
+    hopf_result: HopfResult | None = None,
 ) -> dict:
     """
-    Combines all three indicators into a single summary dict for dashboard consumption.
-    Returns traffic-light status: 'green' (far from L_c), 'amber' (within 20%),
-    'red' (within 5% or past L_c).
-    Threshold logic: compute L_fraction = L / L_c. 
-    green if L_fraction < 0.8, amber if 0.8–0.95, red if > 0.95.
+    Combines all three indicators into a single summary dict for dashboard
+    consumption. Returns traffic-light status keyed to the saddle-node
+    fold detected by detect_fold:
+        L_fraction = L / fold_result.L_fold
+        green if L_fraction < 0.80
+        amber if 0.80 <= L_fraction < 0.95
+        red   if L_fraction >= 0.95
+
+    If hopf_result is provided and contains a genuine Hopf locus, the
+    secondary channel reports the equivalent ratio against L_c. Under the
+    current 2-D and 3-D model classes this branch is never taken because
+    detect_hopf never returns found=True (see CLAUDE.md "3-Species
+    Extension — Results and Mathematical Findings").
     """
 ```
 
@@ -403,3 +443,53 @@ All plots must be clean, labelled, and presentable to non-technical stakeholders
    - Variance vs L (or t)
    - Autocorrelation vs L (or t)
    - Traffic light overlay
+
+---
+
+## DONE — 3-species (S, R, D) extension
+
+Implemented April 2026 as a fully additive extension on top of Tasks 1–6
+plus the saddle-node fold detector. The 2-D pipeline is unchanged and
+remains the default (`use_3species=False` on every `ShellConfig`); the
+3-species pipeline is invoked explicitly via
+`scripts/run_3species_pipeline.py`.
+
+**ODE system (matches MOCAT-pySSEM structure):**
+```
+S_dot = L − δ_S·S − β·S·D − β_SR·S·R
+R_dot = δ_S·S − δ_R·R − β_RD·R·D
+D_dot = β·S·D + β_SR·S·R + β_RD·R·D + γ·D² − δ_D·D
+```
+`R_dot` deliberately omits the `−β_SR·S·R` self-term — an active-derelict
+collision destroys the active satellite and produces fragments but does
+not remove the derelict body. This asymmetry is documented in `model.py`
+and reflected exactly in the `J[1,1]` entry of the analytical Jacobian.
+
+**Components delivered:**
+- `shell_config.py`: optional fields `delta_R`, `beta_SR`, `beta_RD` and
+  `use_3species: bool = False` flag with conditional validation
+  (`δ_S < δ_R < δ_D`, strict positivity of new collision rates only when
+  the flag is set).
+- `model.py`: `s_dot_3species`, `r_dot_3species`, `d_dot_3species`,
+  `ode_system_3species` (state vector `y = [S, R, D]`).
+- `fixed_points.py`: `find_fixed_points_3species` (grid-seeded `fsolve`
+  with dedup and physicality filter) and `continuation_sweep_3species`
+  (warm-started, **all-branch** tracking with a grid rescan to spawn new
+  branches; nearest-neighbour matching with relative thresholds).
+- `eigenvalues.py`: `jacobian_3species` (3×3 analytical),
+  `eigenvalue_analysis_3species` (sorted eigenvalues + leading complex
+  pair classification), `track_eigenvalues_3species` (per-branch sweep
+  with `detect_hopf`-compatible aliases).
+- Tests: `test_shell_config.py` updates, `test_model_3species.py`,
+  `test_fixed_points_3species.py`, `test_eigenvalues_3species.py` —
+  46 new tests; all 113 original 2-D tests still passing.
+- Pipeline + report: `scripts/run_3species_pipeline.py` and
+  `reports/3species_pipeline_summary.md`.
+
+**Result:** no Hopf bifurcation found on any shell on any branch
+(lower coexistence: `complex_no_crossing`; upper coexistence:
+`no_complex_eigenvalues`). The saddle-node fold survives in 3-D at
+slightly different `L_fold` values, and the trace analysis derived from
+the analytical 3×3 Jacobian shows structurally why the fold beats the
+Hopf in this model class. See CLAUDE.md "3-Species Extension — Results
+and Mathematical Findings" for the full discussion.
