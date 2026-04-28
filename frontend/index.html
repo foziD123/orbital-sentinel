@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbital Sentinel — Kessler Scenario Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!--
+    No CDN dependencies — all scripts bundled locally for offline demo day.
+    Vendor files live in frontend/vendor/ (see README for download instructions).
+    Fallback: if vendor/ is missing, CDN links below are used automatically.
+  -->
+
+  <!-- D3 v7 -->
+  <script>
+    // Try local first; on error the onerror handler loads from CDN.
+    // This makes the page work both offline (vendor/) and with just a browser.
+  </script>
+  <script src="vendor/d3.v7.min.js" onerror="
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js';
+    document.head.appendChild(s);
+  "></script>
+
+  <!-- React 18 + ReactDOM (development builds — small, readable errors) -->
+  <script src="vendor/react.development.js" onerror="
+    var s=document.createElement('script');
+    s.src='https://unpkg.com/react@18/umd/react.development.js';
+    document.head.appendChild(s);
+  "></script>
+  <script src="vendor/react-dom.development.js" onerror="
+    var s=document.createElement('script');
+    s.src='https://unpkg.com/react-dom@18/umd/react-dom.development.js';
+    document.head.appendChild(s);
+  "></script>
+
+  <!-- Babel standalone (transpiles JSX in-browser — fine for demo day) -->
+  <script src="vendor/babel.min.js" onerror="
+    var s=document.createElement('script');
+    s.src='https://unpkg.com/@babel/standalone/babel.min.js';
+    document.head.appendChild(s);
+  "></script>
+
+  <!-- Google Fonts (Inter) — gracefully degrades to system-ui if offline -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+        rel="stylesheet" crossorigin />
+</head>
+<body>
+
+  <div id="root">
+    <div class="loading">Loading…</div>
+  </div>
+
+  <!-- D3 chart component (plain JS, no JSX) -->
+  <script src="chart.js"></script>
+
+  <!-- React application (JSX, transpiled by Babel) -->
+  <script type="text/babel" src="app.jsx"></script>
+
+</body>
+</html>

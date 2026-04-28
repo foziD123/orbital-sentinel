@@ -1,0 +1,40 @@
+{
+  "event": "Chinese ASAT test (Fengyun-1C destruction)",
+  "date": "2007-01-11",
+  "description": "China destroyed its Fengyun-1C meteorological satellite (Intl. Designator 1999-025A, US Satellite Number 25730) using a ballistic interceptor launched near Xichang. The 960-kg spacecraft was struck while in an orbit of 845 km x 865 km at 98.6 deg inclination. This created the largest single orbital debris-generation event in history.",
+  "altitude_km": 865,
+  "target_orbit_km": "845x865",
+  "target_inclination_deg": 98.6,
+  "target_mass_kg": 960,
+  "shell": "Shell_B_800km",
+  "fragment_count_cataloged_2months": 1200,
+  "fragment_count_tracked_2months": 1600,
+  "fragment_count_cataloged_march2007": 1600,
+  "fragment_count_cataloged_jan2009": 2378,
+  "fragment_count_estimated_gt1cm": 35000,
+  "fraction_with_mean_altitude_gt850km": 0.5,
+  "S_pre_estimated": 400,
+  "D_pre_estimated": 1000,
+  "S_post_estimated": 399,
+  "D_post_estimated": 2600,
+  "source": "NASA Orbital Debris Quarterly News, Vol. 11, Issue 2, April 2007 (ODQNv11i2.pdf); Vol. 13, Issue 1, January 2009 (ODQNv13i1.pdf)",
+  "source_key_quotes": [
+    "Two months after the test, more than 1200 debris had been officially cataloged by the U.S. Space Surveillance Network (SSN), and nearly 400 additional debris were being tracked, awaiting permanent catalog numbers.",
+    "By 31 March 2007 more than 1600 debris from the Chinese ASAT test had been identified and were being tracked by the U.S. Space Surveillance Network.",
+    "The estimated population of debris larger than 1 cm is greater than 35,000.",
+    "More than half the identified debris were thrown into orbits with mean altitudes in excess of 850 km.",
+    "A total of 2378 fragments greater than 5 cm in diameter have been officially cataloged by the U.S. Space Surveillance Network from the one-metric-ton vehicle (as of January 2009).",
+    "Many of the debris will stay in orbit for decades, and some for more than a century."
+  ],
+  "notes": "Target altitude 865 km lies between Shell_B_800km (750-850 km) and Shell_C_1000km (950-1050 km). Shell B is used as the closest defined shell. S_pre estimated from payloads in the 750-850 km band in 2007 (pre-major-constellation era). D_pre estimated from existing fragmentation debris. More than half of FY-1C debris had mean altitudes above 850 km and will persist for decades. The debris cloud accounts for >25% of all cataloged objects as of January 2009 (2 years post-event) and is the largest collection of fragments from any single event in Earth orbit.",
+  "validation_test": "T5.3",
+  "test_ICs": {
+    "S0": 400,
+    "D0": 1500,
+    "D_spike": 3000,
+    "D_initial_post_spike": 4500,
+    "integration_duration_yr": 30,
+    "pass_criterion": "D(t=10yr) > 0.50 * D_initial_post_spike (i.e. > 2250) AND no divergence",
+    "description": "VALIDATION.md T5.3 approximate initial conditions for Shell_B_800km integration test. D_spike=3000 reflects the large fragment count from FY-1C (>1200 cataloged at 2 months, 2378 cataloged at 2 years, with uncataloged smaller fragments). At Shell B drag timescale ~50 yr, 10 yr retains ~82% of debris by pure drag — well above the 50% threshold. The no-divergence criterion confirms that a single event injection, even this large, does not trigger a full Kessler cascade when L_current << L_fold."
+  }
+}

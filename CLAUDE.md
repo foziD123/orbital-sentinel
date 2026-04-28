@@ -667,6 +667,72 @@ the quadratic approximation as a mean-field simplification.
 
 ---
 
+## Module 2 — Completion Status (April 28, 2026)
+
+Module 2 (Scenario Simulator) is **complete**. The full hybrid
+pre-computed + live-API architecture from MODULE2_PLAN.md is
+implemented and tested end-to-end.
+
+### What was built
+
+**Backend (`api/`)**
+- `api/engine_bridge.py` — thin wrapper around the bifurcation engine;
+  `compute_whatif(L_multiplier, debris_removal_rate, gamma_multiplier)`
+  runs all three shells in a single call and returns new L_fold, traffic
+  light, and lower-branch curve per shell.
+- `api/main.py` — FastAPI application with four endpoints:
+  - `GET /api/health` — liveness probe
+  - `GET /api/base` — returns all three pre-computed static JSON files
+  - `POST /api/whatif` — computes what-if scenario; enforces 5-overlay cap
+  - `DELETE /api/whatif/clear` — clears server-side overlay state
+  - `GET /api/whatif/scenarios` — returns active scenario list
+  CORSMiddleware enabled. Server-side state reset on page load.
+
+**Export script (`scripts/export_frontend_data.py`)**
+Generates three static JSON files consumed by the frontend on page load:
+- `frontend/data/base_curves.json` (82 KB) — lower + upper D* vs L branches
+  + fold coordinates per shell
+- `frontend/data/shell_current_state.json` — copy of real-world snapshot
+- `frontend/data/indicator_curves.json` (160 KB) — recovery time (200 pts),
+  variance (952 pts), and lag-1 AC (952 pts) per shell
+
+**Frontend (`frontend/`)**
+- `index.html` — entry point; loads vendor JS from `vendor/` for offline use
+- `chart.js` — D3 v7 bifurcation diagram component: lower branch (solid blue),
+  upper branch (dashed blue), L_fold red dashed vertical line, orange star
+  real-world marker with tooltip, overlay API (`addOverlay`, `removeOverlay`,
+  `clearOverlays`, `updateTrafficLight`)
+- `app.jsx` — React 18 app: three shell panels side by side, control panel
+  with preset buttons (fill sliders, do not auto-submit), custom parameter
+  sliders, scenario overlay list with per-overlay remove button, "Clear all"
+  visible whenever any scenario is active, traffic lights per shell
+- `styles.css` — dark theme, responsive grid (3-col → 2-col → 1-col)
+- `vendor/` — D3 v7, React 18, ReactDOM 18, Babel standalone bundled locally
+  for fully offline demo-day operation
+
+### Test: three MODULE2_PLAN.md presets
+
+| Preset | Shell A | Shell B | Shell C |
+|--------|---------|---------|---------|
+| Starlink doubles (L×2) | green | green | red |
+| ESA removes 5/yr | green | green | **amber** |
+| Major collision (γ×1.5) | green | green | red |
+
+Shell C shifts from red → amber with 5 obj/yr active removal — the key
+policy finding visible directly in the simulator.
+
+### To run
+
+```bash
+# Terminal 1 — API (from repo root)
+PYTHONPATH=. .venv/bin/uvicorn api.main:app --port 8000
+# Terminal 2 — frontend
+cd frontend && python3 -m http.server 3000
+# Open http://localhost:3000
+```
+
+---
+
 ## Contacts and external validators
 
 - **Giovanni Perosa** (giovanni.perosa@xfel.eu) — HOPFEL technology owner, European XFEL.

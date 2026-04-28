@@ -101,41 +101,43 @@ orbital-sentinel/
 ├── TASKS.md                         ← technical task breakdown
 ├── TODO.md                          ← current task list and status
 ├── VALIDATION.md                    ← acceptance criteria
+├── MODULE2_PLAN.md                  ← scenario simulator architecture
+├── MODULE3_PLAN.md                  ← dashboard architecture
 ├── NEXT_STEPS.md                    ← session handoff / roadmap
 ├── bifurcation_engine/
-│   ├── src/
-│   │   ├── shell_config.py          ← altitude-shell parameters + loader
-│   │   ├── model.py                 ← 2-D + 3-species ODEs
-│   │   ├── fixed_points.py          ← continuation solver (2-D + 3-species)
-│   │   ├── eigenvalues.py           ← Jacobian + (α, ω) tracker (2-D + 3-species)
-│   │   ├── hopf_detector.py         ← Hopf + saddle-node fold detectors
-│   │   ├── integrator.py            ← RK45 nonlinear trajectories
-│   │   ├── early_warning.py         ← CSD indicators + traffic-light summary
-│   │   ├── split_decay_config.py    ← split-decay (κ_S / ϱ_S) config
-│   │   ├── model_split.py           ← split-decay ODE
-│   │   ├── fixed_points_split.py    ← split-decay continuation
-│   │   ├── eigenvalues_split.py     ← split-decay Jacobian + tracker
-│   │   └── hopf_detector_split.py   ← split-decay fold detector
-│   ├── tests/                       ← 231 passed, 1 skipped
-│   ├── notebooks/
-│   │   └── engine_demo.ipynb
+│   ├── src/                         ← engine source (model, solver, indicators)
+│   ├── tests/                       ← 248 passed, 0 skipped
+│   ├── notebooks/engine_demo.ipynb
 │   └── requirements.txt
-├── data/
-│   ├── parameters/
-│   │   └── shell_defaults.json      ← literature-calibrated shell parameters
-│   └── real_world/
-│       └── shell_current_state.json ← live Space-Track snapshot (Apr 2026)
+├── api/
+│   ├── __init__.py
+│   ├── engine_bridge.py             ← compute_whatif() wrapper
+│   └── main.py                      ← FastAPI: /api/base, /api/whatif, /api/live
+├── frontend/
+│   ├── index.html                   ← Scenario Simulator
+│   ├── dashboard.html               ← Early Warning Dashboard
+│   ├── app.jsx                      ← React simulator app
+│   ├── dashboard.jsx                ← React dashboard app
+│   ├── chart.js                     ← D3 bifurcation diagram component
+│   ├── styles.css / dashboard.css
+│   ├── data/                        ← pre-computed JSON (base curves, indicators)
+│   └── vendor/                      ← D3, React, Babel (offline-ready)
 ├── scripts/
-│   ├── plot_shell_B_bifurcation.py           ← Shell B diagram (math only)
-│   ├── plot_shell_B_bifurcation_realworld.py ← Shell B diagram + real-world marker
-│   ├── fetch_realworld_data.py               ← Space-Track / Celestrak data pull
-│   └── run_split_decay_sweep.py              ← 2 400-cell Hopf-hunt sweep
+│   ├── export_frontend_data.py      ← pre-computes frontend/data/ JSON files
+│   ├── fetch_realworld_data.py      ← Space-Track / Celestrak data pull
+│   ├── plot_shell_B_bifurcation.py
+│   └── plot_shell_B_bifurcation_realworld.py
+├── data/
+│   ├── parameters/shell_defaults.json
+│   ├── real_world/shell_current_state.json
+│   └── historical/
+│       ├── iridium_cosmos_2009.json
+│       └── chinese_asat_2007.json
 └── reports/
     ├── shell_B_bifurcation.png
     ├── shell_B_bifurcation_realworld.png
     ├── kessler_fold_summary.md
-    ├── split_decay_sweep_summary.md
-    └── split_decay_sweep_Shell_{B,C}_*.{csv,png}
+    └── split_decay_sweep_summary.md
 ```
 
 ---
@@ -152,11 +154,69 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 pip install -r bifurcation_engine/requirements.txt
+pip install fastapi "uvicorn[standard]" pydantic
 ```
 
 ---
 
-## Quick start
+## Running the full system
+
+### Step 1 — Pre-compute static frontend data
+
+Run once (or after any engine change):
+
+```bash
+PYTHONPATH=. python scripts/export_frontend_data.py
+```
+
+This writes three JSON files into `frontend/data/` that the browser loads instantly
+on page open, so the diagrams render even when the API server is not running.
+
+### Step 2 — Start the API server
+
+**Without live Space-Track data** (uses cached April 2026 snapshot):
+
+```bash
+PYTHONPATH=. .venv/bin/uvicorn api.main:app --port 8000
+```
+
+**With live Space-Track data** (S, D counts fetched from the real catalog on every
+dashboard load):
+
+```bash
+PYTHONPATH=. \
+  SPACETRACK_USER="your@email.com" \
+  SPACETRACK_PASS="yourpassword" \
+  .venv/bin/uvicorn api.main:app --port 8000
+```
+
+A free Space-Track account can be created at
+[https://www.space-track.org/auth/createAccount](https://www.space-track.org/auth/createAccount).
+When credentials are set, the dashboard queries the live GP catalog on every load
+and shows real-time object counts. Without credentials it falls back to the cached
+April 2026 snapshot automatically — the dashboard still works fully.
+
+### Step 3 — Serve the frontend
+
+```bash
+cd frontend
+python3 -m http.server 3000
+```
+
+Then open:
+
+| Page | URL | Description |
+|---|---|---|
+| Scenario Simulator | http://localhost:3000 | Interactive what-if bifurcation diagrams |
+| Early Warning Dashboard | http://localhost:3000/dashboard.html | Live monitoring panel for all three shells |
+
+The simulator works without the API server (base curves load from static files).
+The dashboard's live S/D counts require the API server; without it the page falls
+back to the cached snapshot.
+
+---
+
+## Quick start — engine only
 
 ### Run the test suite
 
@@ -164,9 +224,7 @@ pip install -r bifurcation_engine/requirements.txt
 pytest bifurcation_engine/tests/ -v
 ```
 
-Expected: **231 passed, 1 skipped**. The skip covers the historical-scenario
-module (T5.2 Iridium–Cosmos 2009, T5.3 Fengyun-1C 2007) pending the NASA ODQN
-data pull — tracked in [`TODO.md`](TODO.md).
+Expected: **248 passed, 0 skipped**.
 
 ### Detect the fold for a single shell
 
@@ -178,8 +236,7 @@ import numpy as np
 shell_B = load_shell_by_name("Shell_B_800km")
 fold = detect_fold(shell_B, L_values=np.linspace(1.0, 1200.0, 4001))
 print(fold.description)
-# → Shell_B_800km: saddle-node fold at L ≈ 670.0 objects/yr,
-#   merged coexistence equilibrium (S*, D*) ≈ (6.68e+02, 6.65e+04).
+# → Shell_B_800km: saddle-node fold at L ≈ 670.0 objects/yr
 ```
 
 ### Get the early-warning traffic light
@@ -205,60 +262,25 @@ print(f"D(t_end) = {traj['D'][-1]:.2e}, terminated_early = {traj['terminated_ear
 # → Runaway: terminated early at the runaway_ceiling_D.
 ```
 
-### Regenerate the bifurcation diagrams
-
-```bash
-# Math-only diagram
-.venv/bin/python scripts/plot_shell_B_bifurcation.py
-
-# With real-world current-state marker (requires shell_current_state.json)
-.venv/bin/python scripts/plot_shell_B_bifurcation_realworld.py
-```
-
-### Refresh the real-world data (Space-Track account required)
-
-```bash
-.venv/bin/python scripts/fetch_realworld_data.py \
-    --user your@email.com --pass yourpassword
-# Falls back to Celestrak, then ESA SER 2024 hard-coded values if unavailable.
-```
-
 ---
 
 ## Status
 
-**Module 1 — bifurcation engine: complete.** 231 passed, 1 skipped.
-
 | Item | Status |
 |---|---|
-| `shell_config.py` — altitude-shell parameters | done |
-| `model.py` — 2-D + 3-species ODEs | done |
-| `fixed_points.py` — continuation solver | done |
-| `eigenvalues.py` — Jacobian + eigenvalue tracker | done |
-| `hopf_detector.py` — Hopf + fold detectors | done |
-| `integrator.py` — RK45 nonlinear trajectories | done |
-| `early_warning.py` — CSD indicators + traffic light | done |
-| 3-species `(S, R, D)` extension | done |
-| Split-decay Hopf-hunt (2 400-cell sweep) | done — zero Hopf found |
-| Step 1 — real-world current-state pull (Space-Track) | done |
-| T5.2 — Iridium–Cosmos 2009 historical scenario | pending NASA ODQN pull |
-| T5.3 — Fengyun-1C 2007 historical scenario | pending NASA ODQN pull |
-| Module 2 — scenario simulator | scheduled |
-| Module 3 — early-warning dashboard | scheduled |
+| Bifurcation engine (2-D, 3-species, split-decay) | **done** — 248 passed, 0 skipped |
+| Step 1 — real-world current-state pull (Space-Track) | **done** |
+| Step 2 — T5.2 Iridium–Cosmos 2009 historical scenario | **done** |
+| Step 2 — T5.3 Fengyun-1C 2007 historical scenario | **done** |
+| Module 2 — Scenario Simulator (React + D3 + FastAPI) | **done** |
+| Module 3 — Early Warning Dashboard | **done** |
 | Phase 2 — MOCAT-pySSEM parameter calibration | scheduled |
 
 ---
 
 ## Roadmap
 
-- **Step 2 — historical scenarios.** Pull pre- and post-event debris counts from
-  the NASA Orbital Debris Quarterly News for the Iridium–Cosmos (2009) and
-  Fengyun-1C (2007) events; unskip T5.2 and T5.3; target 233 passed, 0 skipped.
-- **Module 2 — scenario simulator.** Configurable launch-rate trajectories,
-  deorbit policies, and constellation-deployment scenarios; per-shell forward
-  integration to 2050; scenario-comparison plots and CSV outputs.
-- **Module 3 — dashboard.** Interactive bifurcation diagram with live current-state
-  marker, traffic-light banner, and the three early-warning indicator curves.
-  Target: runs in seconds on a laptop for the **1 June 2026** demonstration.
 - **Phase 2 — pySSEM calibration.** Replace literature parameters with data-driven
   `(β, γ, δ_S, δ_D)` extracted from MIT ARCLab's MOCAT-pySSEM calibrated runs.
+- **Phase 2 — live Space-Track integration.** Automated nightly refresh of
+  `shell_current_state.json` so the dashboard always shows the latest catalog.

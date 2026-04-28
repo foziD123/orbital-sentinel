@@ -1,0 +1,29 @@
+{
+  "event": "Iridium-Cosmos collision",
+  "date": "2009-02-10",
+  "description": "First accidental hypervelocity collision of two intact spacecraft. Iridium 33 (560 kg, US operational, Intl. Designator 1997-051C) and Cosmos 2251 (~900 kg, Russian decommissioned, Intl. Designator 1993-036A) collided at 790 km altitude over northern Siberia at >11 km/s.",
+  "altitude_km": 790,
+  "shell": "Shell_B_800km",
+  "iridium_mass_kg": 560,
+  "cosmos_mass_kg": 900,
+  "fragment_count_cataloged_march2009": 823,
+  "fragment_count_expected_body_to_body": 1300,
+  "iridium_constellation_size_at_collision": 70,
+  "S_pre_estimated": 80,
+  "D_pre_estimated": 1800,
+  "S_post_estimated": 79,
+  "D_post_estimated": 2623,
+  "source": "NASA Orbital Debris Quarterly News, Vol. 13, Issue 2, April 2009 (ODQNv13i2.pdf)",
+  "source_key_quote": "By the end of March, 823 of the larger debris had been identified and cataloged by the SSN with additional debris being tracked, but not yet cataloged. A larger amount (~1300) would be expected if the two satellites had hit body-to-body.",
+  "notes": "S_pre estimated as Iridium constellation (70 active satellites at ~780 km) plus ~10 other payloads in the 750-850 km band. D_pre estimated from pre-existing fragmentation debris (including FY-1C fragments from Jan 2007 ASAT test) at 750-850 km. Cosmos 2251 was already decommissioned, so S_post = S_pre - 1 (loss of Iridium 33). D_post = D_pre + 823 cataloged fragments (March 2009). Actual pop at altitude band 750-850 km is a subset of global LEO total. The event was the 4th known accidental hypervelocity collision between two cataloged objects, and the first between two intact spacecraft.",
+  "validation_test": "T5.2",
+  "test_ICs": {
+    "S0": 500,
+    "D0": 2000,
+    "D_spike": 2000,
+    "D_initial_post_spike": 4000,
+    "integration_duration_yr": 20,
+    "pass_criterion": "D(t=20yr) < 0.80 * D_initial_post_spike (i.e. < 3200)",
+    "description": "VALIDATION.md T5.2 approximate initial conditions for Shell_B_800km integration test. S0=500 and D0=2000 represent a plausible pre-event Shell B population (includes active payloads, derelicts, and rocket bodies). D_spike=2000 represents the Iridium-Cosmos fragment injection (based on ~823 cataloged by March 2009 and ~1300 expected body-to-body; 2000 is a conservative upper estimate including uncataloged smaller fragments). At Shell B (800 km), atmospheric drag decay time ~50 yr means debris should decrease by >20% over 20 yr when the system is sub-critical (L << L_fold)."
+  }
+}

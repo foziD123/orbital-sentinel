@@ -1,0 +1,268 @@
+/* ============================================================
+   Orbital Sentinel — Early Warning Dashboard
+   dashboard.css  (extends styles.css variables)
+   ============================================================ */
+
+/* ---- Dashboard header ---- */
+.dash-header { margin-bottom: 24px; }
+.dash-header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+.dash-header .subtitle { color: var(--text-dim); font-size: 13px; margin: 0 0 6px; }
+.dash-header .explainer {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 6px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: inline-block;
+}
+.dash-header .timestamp { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+
+/* ---- Loading state ---- */
+.dash-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 340px;
+  color: var(--text-dim);
+}
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Cache warning banner ---- */
+.cache-banner {
+  background: #2a2000;
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #f4d03f;
+  margin-bottom: 16px;
+}
+
+/* ---- Section titles ---- */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 28px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ---- Section 1: Status cards ---- */
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.status-card {
+  border-radius: 10px;
+  border-width: 2px;
+  border-style: solid;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.status-card.green { border-color: #2DC653; background: #0a1f10; }
+.status-card.amber { border-color: #F4A100; background: #1f1500; }
+.status-card.red   { border-color: #D62828; background: #1f0808; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-tl-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+.card-shell-name { font-size: 15px; font-weight: 700; }
+.card-status-text { font-size: 12px; color: var(--text-dim); }
+
+/* Progress bar */
+.progress-wrap { display: flex; flex-direction: column; gap: 4px; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.progress-bar-bg {
+  height: 8px;
+  background: var(--bg3);
+  border-radius: 4px;
+  overflow: visible;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  max-width: 100%;
+}
+.progress-bar-fill.green { background: #2DC653; }
+.progress-bar-fill.amber { background: #F4A100; }
+.progress-bar-fill.red   { background: #D62828; }
+/* Past-fold indicator */
+.progress-bar-overflow {
+  position: absolute;
+  top: 0; right: 0;
+  height: 100%;
+  width: 6px;
+  background: #ff4444;
+  border-radius: 0 4px 4px 0;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+@keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+.stat-item { display: flex; flex-direction: column; gap: 2px; }
+.stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-value { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat-unit  { font-size: 10px; color: var(--text-dim); }
+.trend-up   { color: var(--red); }
+.trend-down { color: var(--green); }
+.trend-stable { color: var(--text-dim); }
+
+/* Interpretation line */
+.card-interp {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 8px;
+}
+
+/* ---- Section 2: Indicator charts ---- */
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.indicator-col { display: flex; flex-direction: column; gap: 10px; }
+.indicator-col-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px;
+  background: var(--bg3);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.indicator-chart-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+.indicator-chart-card h4 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.indicator-chart-card .annotation {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ---- Section 3: Explainer ---- */
+.explainer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.explainer-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.explainer-card h3 { margin: 0 0 10px; font-size: 13px; font-weight: 600; }
+.explainer-card p, .explainer-card li {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  margin: 0 0 6px;
+}
+.explainer-card ul { padding-left: 16px; margin: 0; }
+.tl-line { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.tl-dot-sm {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ---- Section 4: Shell C alert ---- */
+.alert-panel {
+  background: #1f0808;
+  border: 2px solid var(--red);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-top: 28px;
+}
+.alert-panel h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff6b6b;
+}
+.alert-panel p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+.alert-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+.alert-link:hover { text-decoration: underline; }
+
+/* ---- Research prototype badge ---- */
+.prototype-badge {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 10px;
+  vertical-align: middle;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .status-cards, .indicator-grid { grid-template-columns: 1fr 1fr; }
+  .explainer-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .status-cards, .indicator-grid { grid-template-columns: 1fr; }
+}

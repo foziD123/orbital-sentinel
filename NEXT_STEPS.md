@@ -1,7 +1,7 @@
 # Orbital Sentinel — Next Steps Plan
-**Last updated:** April 26, 2026
-**Status:** Module 1 complete (231 passed, 1 skipped, 0 failed)
-**Next session starts here.**
+**Last updated:** April 27, 2026
+**Status:** Module 1 complete (248 passed, 0 skipped, 0 failed). Steps 1 and 2 done.
+**Next session starts at Step 3.**
 
 ---
 
@@ -12,9 +12,13 @@ The Kessler tipping point is confirmed as a saddle-node fold across three model
 variants and 2,400 parameter combinations. Early-warning indicators are
 implemented and passing. The Hopf question is closed.
 
-What the bifurcation diagram is currently missing: a real-world anchor.
-It shows the math beautifully but doesn't yet say "and here is where Shell C
-sits today." That's what the next steps fix.
+**Step 1 (real-world current state) is done.** Shell C is RED at L/L_fold=1.091.
+`data/real_world/shell_current_state.json` and `reports/shell_B_bifurcation_realworld.png`
+are produced.
+
+**Step 2 (NASA ODQN historical scenarios) is done.** 248 passed, 0 skipped, 0 failed.
+T5.2 (Iridium-Cosmos 2009) and T5.3 (Fengyun-1C 2007) are implemented and passing.
+Historical data: `data/historical/iridium_cosmos_2009.json` and `data/historical/chinese_asat_2007.json`.
 
 ---
 
@@ -137,8 +141,8 @@ June 1 demo.
 - [x] Task 7: Early-warning indicators implemented and passing
 - [x] Hopf hunt closed, fold confirmed as tipping point
 - [x] kessler_fold_summary.md and PDF produced
-- [ ] Step 1: Real-world S/D/L data per shell
-- [ ] Step 2: T5.2 and T5.3 historical scenarios passing
+- [x] Step 1: Real-world S/D/L data per shell (Shell C RED, L/L_fold=1.091)
+- [x] Step 2: T5.2 and T5.3 historical scenarios passing (248 passed, 0 skipped)
 - [ ] Module 2: Scenario simulator (React + D3)
 - [ ] Module 3: Early-warning dashboard
 - [ ] Phase 2: pySSEM parameter calibration

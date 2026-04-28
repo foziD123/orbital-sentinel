@@ -1,0 +1,405 @@
+/* ============================================================
+   Orbital Sentinel — Module 2 Scenario Simulator
+   styles.css
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --bg:       #0f1117;
+  --bg2:      #1a1d27;
+  --bg3:      #23273a;
+  --border:   #2e3350;
+  --text:     #e8eaf0;
+  --text-dim: #8890aa;
+  --accent:   #4a90d9;
+  --green:    #2DC653;
+  --amber:    #F4A100;
+  --red:      #D62828;
+  --font:     "Inter", system-ui, sans-serif;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ---- Nav bar (shared across all pages) ---- */
+.nav-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.nav-bar a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.nav-bar a:hover  { color: var(--text); background: var(--bg3); }
+.nav-bar a.active { color: var(--text); border-color: var(--border); background: var(--bg3); font-weight: 600; }
+
+/* ---- App layout ---- */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.api-status {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.api-ok  { color: var(--green); font-weight: 600; }
+.api-down{ color: var(--amber); font-weight: 600; }
+
+/* ---- Charts row ---- */
+
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.shell-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+
+.shell-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chart-container {
+  padding: 4px 4px 8px;
+}
+
+.chart-container svg { display: block; width: 100%; }
+
+/* ---- D3 text styles ---- */
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--text);
+}
+
+.axis-label {
+  font-size: 11px;
+  fill: var(--text-dim);
+}
+
+.fold-label {
+  font-size: 10px;
+  fill: var(--red);
+}
+
+.traffic-label {
+  font-size: 10px;
+  fill: var(--text-dim);
+}
+
+.x-axis text, .y-axis text { fill: var(--text-dim); font-size: 10px; }
+.x-axis path, .x-axis line,
+.y-axis path, .y-axis line { stroke: var(--border); }
+
+/* ---- Legend row ---- */
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 4px 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- Control panel ---- */
+
+.control-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 220px;
+  gap: 12px;
+  align-items: start;
+}
+
+.panel-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.panel-section h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ---- Preset buttons ---- */
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn-preset {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-preset:hover:not(:disabled) { background: #2e3350; }
+.btn-preset:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---- Parameter grid ---- */
+
+.params-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.params-grid label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.param-value {
+  color: var(--text);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+.params-grid input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.label-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* ---- Compute button ---- */
+
+.btn-compute {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-compute:hover:not(:disabled) { background: #3a7bc8; }
+.btn-compute:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---- Toast error ---- */
+
+.toast-error {
+  margin-top: 8px;
+  background: #3d1515;
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #f8a0a0;
+}
+
+/* ---- Scenarios list ---- */
+
+.no-scenarios {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.scenario-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.scenario-item:last-of-type { border-bottom: none; }
+
+.scenario-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scenario-label {
+  flex: 1;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scenario-lights {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 2px;
+  line-height: 1;
+}
+.btn-remove:hover { color: var(--red); }
+
+.btn-clear-all {
+  margin-top: 10px;
+  width: 100%;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-clear-all:hover { background: #b02020; }
+
+/* ---- Traffic-light indicator ---- */
+
+.traffic-light {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  flex-shrink: 0;
+}
+
+/* ---- Traffic-light legend ---- */
+
+.tl-legend .tl-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 4px 0;
+}
+
+/* ---- Tooltip ---- */
+
+.tooltip {
+  position: fixed;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 220px;
+  line-height: 1.5;
+}
+
+.tl-green { color: var(--green); font-weight: 700; }
+.tl-amber { color: var(--amber); font-weight: 700; }
+.tl-red   { color: var(--red);   font-weight: 700; }
+
+/* ---- Loading / error states ---- */
+
+.loading, .error-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.error-banner { color: #f8a0a0; }
+
+/* ---- Responsive (demo laptop) ---- */
+
+@media (max-width: 1100px) {
+  .charts-row { grid-template-columns: 1fr 1fr; }
+  .control-panel { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 700px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .control-panel { grid-template-columns: 1fr; }
+}

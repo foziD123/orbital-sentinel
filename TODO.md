@@ -174,44 +174,37 @@ Merged April 2026, additively, with no edits to any 2-D function or test.
 
 ## KNOWN PENDING
 
-- [ ] **T5.2 — 2009 Iridium-Cosmos collision scenario** (see VALIDATION.md).
-      Currently skipped at module level in
-      `test_validation_scenarios.py`. **Now unblocked pending the NASA
-      ODQN historical-data pull in IMMEDIATE above** — once the pre-
-      and post-event `(S, D)` numbers for Shell B are in,
-      writing the harness and unskipping the test is mechanical.
-      Not a blocker for the Module 1 acceptance gate (which is
-      already satisfied), but required before the June 1 demo.
+- [x] **T5.2 — 2009 Iridium-Cosmos collision scenario** — DONE (April 28 2026).
+      `data/historical/iridium_cosmos_2009.json` written from ODQN V13i2.
+      Test implemented and passing: D decays 24% in 20 yr at L_2009=14 obj/yr.
 
-- [ ] **T5.3 — 2007 Chinese ASAT test scenario** (see VALIDATION.md).
-      Same status as T5.2: module-skipped today, **unblocked pending
-      the NASA ODQN historical-data pull** for Shell C / Fengyun-1C.
+- [x] **T5.3 — 2007 Chinese ASAT test scenario** — DONE (April 28 2026).
+      `data/historical/chinese_asat_2007.json` written from ODQN V11i2+V13i1.
+      Test implemented and passing: D > 50% of post-spike value at 10 yr.
+      Full suite: **248 passed, 0 skipped, 0 failed**.
 
 ---
 
 ## LATER: Modules 2 and 3, Phase 2 integration
 
-### Module 2 — Scenario simulator
+### Module 2 — Scenario simulator — COMPLETE (April 28 2026)
 
-Module 2 starts **after the IMMEDIATE data pulls are complete**. It
-takes the calibrated bifurcation engine and current-state markers
-from Module 1 and wraps them in a what-if scenario harness:
-configurable launch-rate trajectories, deorbit policies, and
-constellation-deployment scenarios; per-shell forward integration
-out to 2050; comparison of where each scenario lands relative to
-`L_fold` and the green / amber / red traffic light from Task 7.
-Output: scenario-comparison plots and a per-scenario summary CSV.
+- [x] `scripts/export_frontend_data.py` — pre-computes base_curves.json,
+      shell_current_state.json copy, indicator_curves.json for instant page load
+- [x] `api/engine_bridge.py` — thin wrapper: `compute_whatif(L_mult, removal, gamma_mult)`
+- [x] `api/main.py` — FastAPI: GET /api/base, POST /api/whatif, DELETE /api/whatif/clear,
+      GET /api/health; all 3 shells in one call; 5-overlay cap; CORS enabled
+- [x] `frontend/index.html` + `chart.js` + `app.jsx` + `styles.css` — D3 bifurcation
+      diagrams for all 3 shells, real-world orange star markers, traffic lights,
+      preset buttons (fill sliders, user clicks Add to submit), custom sliders,
+      scenario overlay list with per-overlay remove and "Clear all"
+- [x] `frontend/vendor/` — D3 v7, React 18, ReactDOM, Babel bundled locally for offline demo
 
-### Module 3 — Early-warning dashboard
+### Module 3 — Early-warning dashboard — IN PROGRESS (April 28 2026)
 
-Module 3 wraps Modules 1 and 2 in an interactive dashboard for the
-ESA / academic / policy audience identified in CLAUDE.md. Inputs:
-shell selection, launch-rate slider, debris-removal toggle, and
-optional historical scenario overlays. Outputs: live bifurcation
-diagram with the "where are we today" marker, traffic-light banner,
-the three critical-slowing-down indicators (recovery time,
-variance, autocorrelation), and a one-line policy interpretation.
-Built on the fold-keyed `early_warning_summary` API from Module 1.
+Module 3 is the non-interactive monitoring panel for ESA / policy audiences.
+Static data only (indicator_curves.json + cached shell state). No sliders.
+Built as frontend/dashboard.html alongside index.html.
 
 ### Phase 2 integration (calibration + live data)
 
