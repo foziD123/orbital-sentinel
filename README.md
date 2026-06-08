@@ -251,17 +251,4 @@ print(summary["fold_channel"]["traffic_light"])   # green / amber / red
 print(summary["fold_channel"]["L_fraction"])       # L_current / L_fold
 ```
 
----
 
-## Status
-
-| Component | Status |
-|---|---|
-| Bifurcation engine (2-D, 3-species, split-decay) | done — 231 passed, 1 skipped |
-| Real-world current-state pull (Space-Track) | done |
-| Historical scenario validation (Iridium-Cosmos 2009, Fengyun-1C 2007) | done |
-| Scenario Simulator (React + D3 + FastAPI) | done |
-| Early Warning Dashboard | done |
-| 4-tab Mission Control UI | done |
-| ECI petition (Take Action page) | done |
-| Phase 2 — MOCAT-pySSEM parameter calibration | not started |
