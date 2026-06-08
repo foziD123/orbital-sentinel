@@ -1,0 +1,356 @@
+================================================================================
+  ORBITAL SENTINEL — MOCK PETITION BLUEPRINT
+  For use in the TeSI 2026 / June 1 Presentation
+  Inspired by ECI "Water and Sanitation are a Human Right" (ECI/2012/000003)
+================================================================================
+
+HOW TO USE THIS FILE
+--------------------
+This is a structural blueprint, not a finished text. Each section lists the
+MUST-HAVE elements — the claim, the data, the ask — in the same order a real
+European Citizens' Initiative or UN-addressed petition would use them.
+The water ECI succeeded because it combined an emotional rights frame with
+hard law citations and very specific policy asks. Do the same here.
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 1 — TITLE & SUBTITLE  (the first thing anyone reads)
+────────────────────────────────────────────────────────────────────────────────
+
+MUST-HAVE: A short, declarative, human-rights-flavoured title that names the
+stakes, plus a one-line subtitle that adds urgency or the "public good" frame.
+
+SUGGESTED TITLE:
+  "Low Earth Orbit is a global commons — protect it before the tipping point."
+
+SUBTITLE OPTIONS:
+  A. "Space belongs to humanity. Orbital debris is humanity's problem. We have
+     the science to act. We need the political will."
+  B. "Our model shows Shell C (1,000 km) has already crossed the mathematical
+     tipping point. The window to act is closing."
+
+WHY THIS FRAMING WORKS:
+  The water ECI used "public good, not a commodity" to shift the debate from
+  economics to rights. Here, "global commons" does the same — it invokes
+  Article I of the Outer Space Treaty ("province of all mankind") and makes
+  orbital debris a shared responsibility, not a private externality.
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 2 — PREAMBLE / OPENING STATEMENT  (~150–200 words)
+────────────────────────────────────────────────────────────────────────────────
+
+MUST-HAVE: One paragraph that (a) names who you are, (b) what you observed,
+(c) why it is urgent, (d) what you are calling on whom to do.
+
+TEMPLATE STRUCTURE:
+  "We, the undersigned, [identity], having observed that [observable fact
+  about the current state of LEO], alarmed that [consequence if nothing
+  changes], and noting that [current law/governance is insufficient], call
+  upon [the European Commission / UN COPUOS / relevant authority] to
+  [high-level ask]."
+
+KEY FACTS TO INCLUDE IN THE PREAMBLE:
+  - Over 34,000 pieces of tracked debris currently orbit Earth alongside
+    ~9,300 active satellites.
+  - An estimated 130 million fragments too small to track but large enough
+    to destroy a spacecraft are already in orbit.
+  - Our bifurcation model (Orbital Sentinel) shows that the 1,000 km shell
+    is operating at 109% of its mathematical tipping-point launch rate —
+    already past the threshold of sustainable orbital operations.
+  - Past this threshold, recovery requires active debris removal on timescales
+    of decades to centuries. A launch rate cut alone cannot restore stability.
+  - The global space economy is valued at over $1.8 trillion. Weather
+    forecasting, Earth observation, climate monitoring, and disaster response
+    all depend on continued access to Low Earth Orbit.
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 3 — THE SCIENTIFIC BASIS  (the explanatory annex equivalent)
+────────────────────────────────────────────────────────────────────────────────
+
+This is the "recognition by international bodies" section of the water ECI,
+but replaced by our own verified scientific evidence. Include this as an
+annex or a clearly labelled subsection. It is the credibility anchor.
+
+MUST-HAVE ELEMENTS:
+
+3.1  THE KESSLER SYNDROME — WHAT IT IS
+  - Named after NASA scientist Donald Kessler (1978).
+  - When orbital debris density exceeds a critical threshold, collisions
+    between debris generate more debris than atmospheric drag removes,
+    creating a self-sustaining cascade.
+  - Once triggered, no operational change can restore the stable orbit.
+    Recovery requires active debris removal over decades to centuries.
+  - The cascade term in the model is quadratic in debris density (γ·D²):
+    once D is large enough, this term outpaces all removal mechanisms.
+
+3.2  WHAT THE ORBITAL SENTINEL MODEL FOUND  (cite your own results)
+  - Methodology: HOPFEL bifurcation analysis (European XFEL), applied to
+    three independently modelled LEO altitude shells.
+  - Three model variants tested (2-species, 3-species, split-decay), 2,400
+    parameter combinations, 231 passing tests: result is structurally robust.
+  - The Kessler tipping point is a saddle-node fold bifurcation — not
+    gradual, not reversible. Below L_fold: stable. Above L_fold: runaway.
+  - Critical launch rates and current status (April 2026 data):
+
+    | Shell  | Altitude  | L_fold (obj/yr) | L_current (obj/yr) | L/L_fold | Status |
+    |--------|-----------|-----------------|---------------------|----------|--------|
+    | A      | 600 km    | 25,100          | 1,329               | 0.053    | GREEN  |
+    | B      | 800 km    | 670             | 206                 | 0.308    | GREEN  |
+    | C      | 1,000 km  | 31.5            | 34.4                | 1.091    | RED    |
+
+    Shell C is already past its fold. The 1,000 km band — home to Iridium,
+    OneWeb, and legacy constellations — is operating in the runaway regime.
+
+3.3  WHY THIS IS IRREVERSIBLE (the asymmetry argument — central to the petition)
+  - A Hopf bifurcation can be backed away from: reduce the control parameter,
+    recover the stable state. A saddle-node fold cannot.
+  - Past L_fold, the stable equilibrium no longer exists. Reducing launch
+    rate below L_fold after the fact does not restore it.
+  - Recovery is only possible through active debris removal, on timescales
+    governed by the slow atmospheric drag clock of the shell:
+      * 800 km (Shell B): decades to clear
+      * 1,000 km (Shell C): centuries to clear
+  - This asymmetry — easy to cross, impossible to uncross through policy
+    alone — is the mathematical reason the tipping point demands preventive
+    action, not reactive cleanup.
+
+3.4  EARLY WARNING INDICATORS (showing we can still act)
+  - Three early-warning signals precede the fold:
+      1. Recovery time after perturbation grows without bound (critical slowing down).
+      2. Variance of the debris population in a sliding window inflates.
+      3. Lag-1 autocorrelation of D(t) approaches 1.
+  - These signals are observable with current Space-Track data.
+  - Shell B is currently GREEN (L/L_fold = 0.308) with wide margin.
+  - Shell A is GREEN (L/L_fold = 0.053) — wide margin, strong drag.
+  - Shell C is RED — the early-warning window has passed for this shell.
+  - This means: Shell A and B can still be protected. Every year of inaction
+    narrows that window.
+
+3.5  WHAT PUTS SATELLITES AT RISK (connect to everyday services)
+  - Earth observation satellites (Copernicus, Landsat, NOAA): 500–800 km,
+    within Shell A and B ranges.
+  - Weather/climate monitoring (EUMETSAT): depends on LEO access.
+  - Broadband connectivity constellations: Starlink (550 km), OneWeb (1,200 km).
+  - Disaster response, maritime monitoring, agricultural sensing.
+  - A cascade in Shell B (800 km) — the historically most congested shell,
+    site of the 2009 Iridium-Cosmos collision — would directly threaten all
+    of the above.
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 4 — THE POLICY GAP  (why existing frameworks are insufficient)
+────────────────────────────────────────────────────────────────────────────────
+
+MUST-HAVE: Show that you know the existing rules, that they are real but
+insufficient, and that they are voluntary where they need to be binding.
+The water ECI did this by noting States had obligations they were failing to
+meet. Here the equivalent is: obligations exist in treaty law but enforcement
+is absent.
+
+4.1  EXISTING INTERNATIONAL LAW — THE GAP BETWEEN PRINCIPLE AND ENFORCEMENT
+  - Outer Space Treaty (1967), Article I: outer space is "the province of all
+    mankind." No state may claim sovereignty. The orbital environment is a
+    global commons by international law.
+  - Outer Space Treaty, Article VI: states bear "international responsibility"
+    for national space activities, including by non-governmental entities.
+  - ITU Radio Regulations: govern frequency and orbital slot allocation but
+    do not address debris or carrying capacity.
+  - UN COPUOS Long-term Sustainability Guidelines (2019): 21 voluntary
+    guidelines. No enforcement mechanism. No compliance reporting requirement.
+  - IADC Debris Mitigation Guidelines: technical best practice from space
+    agencies. Non-binding. Widely ignored by commercial operators.
+
+4.2  EXISTING INITIATIVES — PROMISING BUT INSUFFICIENT IN SCALE
+  - ESA Zero Debris Charter: voluntary commitment by 130+ organisations to
+    design debris-free spacecraft by 2030. Not legally binding. No verification.
+  - FCC 5-Year Deorbit Rule (2022): applies to US-licensed satellites only.
+    No equivalent rule in EU, China, Russia, or India — the other major
+    launch nations.
+  - ClearSpace-1 (ESA): active removal of one Vega-C adapter. One object.
+    ESA estimates ~3,000 objects pose significant risk.
+  - Astroscale ELSA-M: commercial debris removal for Starlink-class objects.
+    Promising technology, no mandatory deployment requirement.
+  - CONCLUSION: We have voluntary charters, single national regulations, and
+    demonstration missions. We do not have binding multilateral rules keyed
+    to the carrying capacity of each shell. The science exists to set those
+    limits. The political will does not yet.
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 5 — THE ASKS  (specific, numbered, actionable)
+────────────────────────────────────────────────────────────────────────────────
+
+MUST-HAVE: The water ECI had three clear asks to the European Commission.
+Ours should have 4–6 numbered asks. Each ask should be concrete enough that
+a policymaker knows exactly what to legislate, and ambitious enough that
+it closes the gap identified in Section 4.
+
+CALL ON THE EUROPEAN COMMISSION / UN COPUOS TO:
+
+1. ESTABLISH BINDING SHELL-SPECIFIC LAUNCH CAPS
+   Commission the European Space Agency and an independent scientific panel
+   to compute maximum sustainable launch rates (L_fold equivalents) for each
+   LEO altitude band. Enact binding EU regulations — and advocate for
+   equivalent UN COPUOS resolutions — that cap new launch licenses when a
+   shell's current launch rate exceeds 80% of its carrying capacity
+   (the amber threshold). Shells operating above 95% of carrying capacity
+   (red threshold) should face a moratorium on new deployments until the
+   debris population is reduced through active removal.
+
+2. MANDATE UNIVERSAL DEORBIT WITHIN 5 YEARS FOR ALL NEW LEO SATELLITES
+   Extend the FCC's 5-year post-mission deorbit rule to all satellites
+   licensed by EU member states, and negotiate a binding multilateral
+   agreement under COPUOS that applies the same standard globally.
+   Voluntary charters do not apply to the operators that pose the greatest
+   risk. Binding deorbit timelines do.
+
+3. INTRODUCE EXTENDED PRODUCER RESPONSIBILITY FOR ORBITAL DEBRIS
+   Operators who generate debris — through collisions, explosions, or
+   non-compliant disposal — should bear financial liability for its
+   removal, proportional to the debris count and altitude-shell decay time.
+   At 1,000 km, a single fragmentation event produces debris that persists
+   for centuries. The operator who caused it should fund the cleanup.
+   Create an EU Orbital Cleanup Fund financed by launch licensing fees,
+   ring-fenced for active debris removal missions.
+
+4. CREATE AN INDEPENDENT ORBITAL SUSTAINABILITY WATCHDOG
+   Establish a permanent EU body — or support a UN COPUOS subsidiary — with
+   the mandate and resources to (a) publish annual per-shell carrying-capacity
+   assessments based on current tracking data, (b) issue public early-warning
+   alerts when any shell enters the amber or red zone, and (c) audit operator
+   compliance with deorbit and debris-mitigation requirements. Transparency
+   is the minimum floor; enforcement authority is the goal.
+
+5. FUND ACTIVE DEBRIS REMOVAL AS A PUBLIC INFRASTRUCTURE PRIORITY
+   Recognise active debris removal as critical infrastructure for the global
+   digital economy, in the same category as maintaining maritime shipping
+   lanes or air traffic management corridors. Allocate dedicated public
+   funding — through the EU Space Programme or Horizon Europe — for at least
+   10 large-object removal missions per year from shells operating above the
+   amber threshold. The commercial sector cannot scale debris removal fast
+   enough without this initial public investment to de-risk the market.
+
+6. OPEN REAL-TIME ORBITAL DENSITY DATA TO THE PUBLIC
+   Mandate that Space-Track.org and equivalent national registries provide
+   fully public, machine-readable, real-time data on tracked object counts,
+   altitudes, and decay predictions, for every LEO shell. The scientific
+   community, the press, and citizens cannot hold operators or regulators
+   accountable for what they cannot see. Orbital density should be public
+   data — like air quality or sea surface temperature.
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 6 — URGENCY STATEMENT  (the closing argument)
+────────────────────────────────────────────────────────────────────────────────
+
+MUST-HAVE: A short, emotionally resonant closing that frames the irreversibility
+of the tipping point and the asymmetry of action vs. inaction. The water ECI
+closed with the human dignity argument. Ours closes with the irreversibility
+argument — the scientific result that makes this different from ordinary
+pollution problems.
+
+SUGGESTED CLOSING PARAGRAPH:
+  "Most environmental problems can be undone if we act in time.
+  Orbital debris is different. Our model shows that the Kessler tipping point
+  is a mathematical fold — a one-way door. Crossing it does not produce a
+  worse but reversible orbit. It produces an unusable one.
+
+  Shell C at 1,000 km has already crossed that line. The debris there will
+  persist for centuries regardless of what we do today. We cannot save Shell C
+  in the short term. We can still save Shells A and B.
+
+  Every year of inaction is a year of narrowing margin. Every constellation
+  added to a shell approaching its limit is a step toward a door that closes
+  behind it. We have the science to know where the door is. We have the
+  technology to slow our approach. We need the law to stop us walking through."
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 7 — STRUCTURAL CHECKLIST  (what any ECI-style petition must contain)
+────────────────────────────────────────────────────────────────────────────────
+
+Drawn directly from the ECI registration criteria (Regulation EU 211/2011)
+and the structure of ECI/2012/000003 (the successful water petition):
+
+  [ ] Title: short, declarative, human-interest framing
+  [ ] Subtitle or tagline: amplifies the public-good / global-commons frame
+  [ ] Subject matter: clearly stated in one sentence
+  [ ] Objectives: numbered list of concrete policy asks
+  [ ] Treaty basis: cite the EU or international treaty articles that give the
+      Commission/COPUOS competence to act on this topic
+       → Outer Space Treaty Art. I, VI; COPUOS mandate; EU Space Regulation
+  [ ] Explanatory annex: the scientific evidence (Sections 3–4 above)
+  [ ] Preamble: who is asking, what they observed, who they are addressing
+  [ ] Signature block: name, country, date (for mock: leave blank / placeholder)
+  [ ] Organising committee / sponsors: Orbital Sentinel team, TeSI 2026,
+      ESADE × UPC × IED, European XFEL (technology partner)
+  [ ] Contact information: placeholder for team email / website
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 8 — TONE & FRAMING NOTES  (for the team writing the final draft)
+────────────────────────────────────────────────────────────────────────────────
+
+- DO frame LEO as a global commons. The Outer Space Treaty already does this.
+  We are not inventing a new legal concept — we are enforcing an existing one.
+
+- DO anchor every claim in either our model output or a named, citable source
+  (ESA SER 2024, FCC docket, Space-Track GP catalog, Aerospace Corp report).
+  The water ECI cited UN resolutions extensively. We cite our own peer-reviewed
+  methodology (HOPFEL) and public agency data.
+
+- DO use the irreversibility argument early and often. This is what
+  distinguishes orbital debris from most pollution problems and justifies
+  the urgency and specificity of the asks.
+
+- DO NOT overstate the certainty of the 1,000 km RED finding. Our model
+  uses literature-calibrated parameters and 2022–2024 launch rate averages.
+  Say: "our model indicates Shell C is operating at or past its tipping-point
+  launch rate" — not "Shell C has definitely crossed the Kessler threshold."
+
+- DO NOT ask for things that have no legal mechanism. Each ask in Section 5
+  is achievable through existing EU regulatory channels (launch licensing,
+  spectrum regulation, Horizon Europe funding) or COPUOS resolutions.
+
+- TONE: authoritative but not alarmist. The water ECI succeeded in part
+  because it was sober, cited, and specific. Panic does not move bureaucrats.
+  Evidence + clear asks + legal hook does.
+
+────────────────────────────────────────────────────────────────────────────────
+KEY NUMBERS TO HAVE ON HAND  (for speakers and Q&A at the June 1 demo)
+────────────────────────────────────────────────────────────────────────────────
+
+  34,000+         tracked debris objects in LEO (Space-Track, April 2026)
+  ~130 million    untracked fragments (>1 cm, ESA estimate)
+  9,300+          active satellites currently in orbit
+  1.091           Shell C's L/L_fold ratio — 9.1% past the tipping point
+  0.308           Shell B's L/L_fold ratio — 69% margin remaining
+  31.5 obj/yr     Shell C's fold threshold (model output, cross-checked analytically)
+  670 obj/yr      Shell B's fold threshold
+  25,100 obj/yr   Shell A's fold threshold
+  $1.8 trillion   global space economy value
+  2009            Iridium-Cosmos collision: 2,000 fragments in Shell B range
+  2007            Fengyun-1C ASAT test: 3,500 fragments in Shell C range
+  5 obj/yr        ESA active removal rate needed to shift Shell C from RED → AMBER
+                  (shown in our What-If simulator: γ×1 preset, removal=5)
+  centuries       time for self-clearance of Shell C under natural drag alone
+  231             passing tests in the Orbital Sentinel bifurcation engine
+  2,400           parameter combinations tested in the split-decay sweep (0 Hopf found)
+
+────────────────────────────────────────────────────────────────────────────────
+SOURCES & CITATIONS  (for the annex)
+────────────────────────────────────────────────────────────────────────────────
+
+  Outer Space Treaty (1967), Art. I & VI — UN Office for Outer Space Affairs
+  UN COPUOS Long-term Sustainability Guidelines (2019)
+  IADC Space Debris Mitigation Guidelines (2002, rev. 2021)
+  ESA Space Environment Report 2024 — Tim Flohrer, ESA Space Debris Office
+  ESA Zero Debris Charter — esa.int/Space_Safety/Space_Debris/ESA_s_Zero_Debris_approach
+  FCC 5-Year Deorbit Rule (2022) — fcc.gov/document/fcc-adopts-new-5-year-rule-deorbiting-satellites-0
+  ClearSpace-1 mission — esa.int/Space_Safety/ClearSpace-1
+  Astroscale ELSA-M — astroscale.com/missions/elsa-m
+  Aerospace Corp Annual Launch Report 2024
+  Space Foundation Q4 2024 Report (2,695 launches, 88% LEO fraction)
+  Kessler & Cour-Palais (1978), "Collision Frequency of Artificial Satellites"
+  HOPFEL Methodology — Giovanni Perosa, European XFEL
+  Orbital Sentinel bifurcation engine — ESADE × UPC × IED, TeSI 2026
+
+================================================================================
+  END OF BLUEPRINT
+  Orbital Sentinel · TeSI 2026 · Tech2X EU Initiative · Fusion Point Academy
+================================================================================

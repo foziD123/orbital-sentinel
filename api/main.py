@@ -14,6 +14,8 @@ Maximum 5 overlays — HTTP 400 after that until /api/whatif/clear is called.
 from __future__ import annotations
 
 import json
+import threading
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -22,6 +24,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .engine_bridge import compute_whatif
@@ -43,6 +46,40 @@ FRONTEND_DATA = REPO_ROOT / "frontend" / "data"
 _scenarios: list[dict] = []
 
 # ---------------------------------------------------------------------------
+# Live data cache — avoids frontend 3-second timeout on Space-Track queries
+# ---------------------------------------------------------------------------
+
+_live_cache: dict | None = None          # last successful live result
+_live_cache_ts: float = 0.0              # epoch seconds when it was fetched
+_LIVE_TTL = 1800.0                        # 30 min TTL
+_refresh_lock = threading.Lock()
+_refresh_running = False
+
+
+def _background_refresh() -> None:
+    """Fetch Space-Track in a background thread and update _live_cache."""
+    global _live_cache, _live_cache_ts, _refresh_running
+    try:
+        result = _live_spacetrack_query()
+        _live_cache = result
+        _live_cache_ts = time.monotonic()
+    except Exception:
+        import traceback
+        traceback.print_exc()
+    finally:
+        _refresh_running = False
+
+
+def _trigger_refresh() -> None:
+    global _refresh_running
+    with _refresh_lock:
+        if _refresh_running:
+            return
+        _refresh_running = True
+    t = threading.Thread(target=_background_refresh, daemon=True)
+    t.start()
+
+# ---------------------------------------------------------------------------
 # Pydantic models
 # ---------------------------------------------------------------------------
 
@@ -62,10 +99,22 @@ class WhatIfRequest(BaseModel):
 # App
 # ---------------------------------------------------------------------------
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app):
+    # Pre-warm the Space-Track cache at startup so the first browser request is fast.
+    import os
+    if os.environ.get("SPACETRACK_USER") and os.environ.get("SPACETRACK_PASS"):
+        print("[orbital-sentinel] Starting Space-Track prefetch…")
+        _trigger_refresh()
+    yield
+
 app = FastAPI(
     title="Orbital Sentinel — Scenario Simulator API",
     description="Module 2 what-if scenario API. Computes bifurcation curves for all three LEO shells.",
     version="2.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -74,6 +123,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
+
+# Serve the Claude Design Mission Control frontend at /mission-control/
+_MC_DIR = REPO_ROOT / "mission-control" / "orbital-sentinel-repo" / "frontend"
+if _MC_DIR.exists():
+    app.mount("/mission-control", StaticFiles(directory=str(_MC_DIR), html=True), name="mission-control")
 
 
 # ---------------------------------------------------------------------------
@@ -390,16 +444,32 @@ def get_live_debug() -> dict:
 def get_live() -> dict:
     """Return live shell state from Space-Track, falling back to cached snapshot.
 
+    Uses a 30-minute in-memory cache so repeated calls return instantly and
+    the frontend's 3-second timeout is never a problem after warm-up.
+
+    On a cold cache: returns the static snapshot immediately and kicks off a
+    background Space-Track fetch. On the next call (a few seconds later) the
+    live data will be ready.
+
     Credentials: set SPACETRACK_USER and SPACETRACK_PASS environment variables
     before starting the server. They are never exposed to the browser.
-
-    If the live query fails for any reason (no credentials, network error,
-    Space-Track downtime), falls back to data/real_world/shell_current_state.json
-    and sets "cached": true in the response.
     """
-    try:
-        return _live_spacetrack_query()
-    except Exception as exc:
-        import traceback
-        traceback.print_exc()
-        return _cached_shell_state(str(exc))
+    import os
+    has_creds = bool(os.environ.get("SPACETRACK_USER")) and bool(os.environ.get("SPACETRACK_PASS"))
+
+    # Serve from cache if fresh
+    age = time.monotonic() - _live_cache_ts
+    if _live_cache is not None and age < _LIVE_TTL:
+        return _live_cache
+
+    # Cache is stale or empty — trigger a background refresh
+    if has_creds:
+        _trigger_refresh()
+
+    # Return whatever we have: stale live data beats static snapshot
+    if _live_cache is not None:
+        stale = dict(_live_cache)
+        stale["cache_age_s"] = round(age)
+        return stale
+
+    return _cached_shell_state("Space-Track fetch in progress — retry in ~60 s" if has_creds else "No credentials")

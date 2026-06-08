@@ -1,0 +1,61 @@
+{
+  "epoch": "2026-04-27",
+  "data_source": "Space-Track.org GP catalog, fetched 2026-04-27",
+  "methodology": "S (satellites in orbit) = active payloads + rocket bodies binned by mean altitude (Space-Track SEMIMAJOR_AXIS field, or Celestrak TLE mean motion via Kepler's 3rd law h = (mu/n^2)^(1/3) - R_Earth). D (trackable debris) = debris objects in same altitude band. L_current = 3-year trailing average (2021-2023) of new LEO objects placed to orbit x altitude-band fraction from ESA MASTER model histogram. A 3-year average is used rather than a single year because Shell C L_fold (31.5 obj/yr) is close enough to L_current (~29.5 obj/yr) that single-year launch-rate noise (2023 was 36, ~22% above average due to accelerated Starlink cadence) would overstate the RED classification. L_fold computed by detect_fold() using literature-calibrated shell parameters. Traffic light: green < 0.80 x L_fold, amber 0.80-0.95 x L_fold, red >= 0.95 x L_fold. L_current is stored as a float (not rounded to int) because rounding 29.5 -> 30 shifts Shell C from amber (0.937) to red (0.952), a classification change driven by arithmetic rather than physics. D discrepancy (live vs ESA fallback) is documented per-shell in D_discrepancy_note.",
+  "shells": {
+    "Shell_A_600km": {
+      "altitude_band_km": [
+        550.0,
+        650.0
+      ],
+      "S_current": 2157,
+      "D_current": 541,
+      "D_fallback_estimate": 850,
+      "D_discrepancy_note": "Live count (541) differs from ESA SER 2024 fallback estimate (850). Discrepancy reflects different altitude-binning methodology between ESA MASTER model estimates and the live GP catalog bin.",
+      "S_note": "active payloads + rocket bodies currently tracked at this altitude",
+      "D_note": "trackable debris fragments (>10 cm class) currently tracked at this altitude",
+      "L_current": 1328.6,
+      "L_current_source": "3-year trailing average (2022\u20132024) of new LEO objects placed to orbit: ~2 100 / ~2 400 / ~2 372 \u2192 avg ~2 291 obj/yr (Aerospace Corp Annual Launch Reports 2023\u20132024; Space Foundation Q4 2024 Space Report, Jan 2025 for the 2024 total of 2 695 objects to all orbits, \u00d70.88 LEO fraction). Altitude distribution from ESA Space Environment Report 2024 (ESA ESOC, Jan 2025), Figure 3 (ESA MASTER model histogram). A 3-year average is used rather than a single year to smooth launch-rate noise. Shell C L_fold \u2248 31.5 obj/yr; the 3-year average gives L_current \u2248 34.4 obj/yr (L/L_fold \u2248 1.09, RED) vs the 2021\u20132023 average of 29.5 (amber). The 2022\u20132024 window is preferred as more current and avoids the anomalously low 2021 launch cadence.",
+      "L_fold": 25100.1,
+      "L_fraction": 0.0529,
+      "traffic_light": "green",
+      "population_source": "Space-Track.org GP catalog, fetched 2026-04-27"
+    },
+    "Shell_B_800km": {
+      "altitude_band_km": [
+        750.0,
+        850.0
+      ],
+      "S_current": 620,
+      "D_current": 2259,
+      "D_fallback_estimate": 3800,
+      "D_discrepancy_note": "Live count (2259) differs from ESA SER 2024 fallback estimate (3800). Discrepancy reflects different altitude-binning methodology between ESA MASTER model estimates and the live GP catalog bin.",
+      "S_note": "active payloads + rocket bodies currently tracked at this altitude",
+      "D_note": "trackable debris fragments (>10 cm class) currently tracked at this altitude",
+      "L_current": 206.2,
+      "L_current_source": "3-year trailing average (2022\u20132024) of new LEO objects placed to orbit: ~2 100 / ~2 400 / ~2 372 \u2192 avg ~2 291 obj/yr (Aerospace Corp Annual Launch Reports 2023\u20132024; Space Foundation Q4 2024 Space Report, Jan 2025 for the 2024 total of 2 695 objects to all orbits, \u00d70.88 LEO fraction). Altitude distribution from ESA Space Environment Report 2024 (ESA ESOC, Jan 2025), Figure 3 (ESA MASTER model histogram). A 3-year average is used rather than a single year to smooth launch-rate noise. Shell C L_fold \u2248 31.5 obj/yr; the 3-year average gives L_current \u2248 34.4 obj/yr (L/L_fold \u2248 1.09, RED) vs the 2021\u20132023 average of 29.5 (amber). The 2022\u20132024 window is preferred as more current and avoids the anomalously low 2021 launch cadence.",
+      "L_fold": 670.0,
+      "L_fraction": 0.3077,
+      "traffic_light": "green",
+      "population_source": "Space-Track.org GP catalog, fetched 2026-04-27"
+    },
+    "Shell_C_1000km": {
+      "altitude_band_km": [
+        950.0,
+        1050.0
+      ],
+      "S_current": 545,
+      "D_current": 873,
+      "D_fallback_estimate": 3200,
+      "D_discrepancy_note": "Live count (873) differs from ESA SER 2024 fallback estimate (3200). Shell C: most Fengyun-1C (2007, ~860 km) and Iridium-Cosmos (2009, ~789 km) fragments were injected below this shell's 950 km floor and have since decayed further. By 2026 the bulk of those debris clouds sits below 950 km, so the live count correctly finds fewer fragments here than the ESA 2024 static estimate (which was less altitude-resolved). The RED traffic light for Shell C is driven by L_current > L_fold, not by debris accumulation \u2014 which is the more alarming finding.",
+      "S_note": "active payloads + rocket bodies currently tracked at this altitude",
+      "D_note": "trackable debris fragments (>10 cm class) currently tracked at this altitude",
+      "L_current": 34.4,
+      "L_current_source": "3-year trailing average (2022\u20132024) of new LEO objects placed to orbit: ~2 100 / ~2 400 / ~2 372 \u2192 avg ~2 291 obj/yr (Aerospace Corp Annual Launch Reports 2023\u20132024; Space Foundation Q4 2024 Space Report, Jan 2025 for the 2024 total of 2 695 objects to all orbits, \u00d70.88 LEO fraction). Altitude distribution from ESA Space Environment Report 2024 (ESA ESOC, Jan 2025), Figure 3 (ESA MASTER model histogram). A 3-year average is used rather than a single year to smooth launch-rate noise. Shell C L_fold \u2248 31.5 obj/yr; the 3-year average gives L_current \u2248 34.4 obj/yr (L/L_fold \u2248 1.09, RED) vs the 2021\u20132023 average of 29.5 (amber). The 2022\u20132024 window is preferred as more current and avoids the anomalously low 2021 launch cadence.",
+      "L_fold": 31.5,
+      "L_fraction": 1.0908,
+      "traffic_light": "red",
+      "population_source": "Space-Track.org GP catalog, fetched 2026-04-27"
+    }
+  }
+}

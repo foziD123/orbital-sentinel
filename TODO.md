@@ -245,3 +245,38 @@ Built as frontend/dashboard.html alongside index.html.
 
 - **Computational performance** — for the live demo (June 1), continuation sweep
   across L must run in seconds. Profile early. If slow, reduce N_shells or L_steps.
+
+---
+
+## FUTURE OPTIONS (not scheduled, decision deferred)
+
+### Live satellite positions in the 3D globe
+
+**What it is:** Replace the current animated/randomised dots in `scene.js` with
+real satellite positions propagated from TLE data — the same approach used by
+sites like satellitetracker3d.com and satellitemap.space.
+
+**How it would work:**
+1. Fetch TLE catalog from Space-Track.org (credentials already wired in
+   `api/main.py`) or Celestrak public endpoint (no auth required).
+2. Add `satellite.js` (MIT, ~100 KB) to `frontend/vendor/` — provides
+   `twoline2satrec(tle1, tle2)` and `propagate(satrec, date)` which return
+   `{x, y, z}` in km.
+3. Divide by 6371 (Earth radius in km) to convert to scene units where
+   Earth radius = 1.
+4. Update `InstancedMesh` positions every 5–10 seconds via a `setInterval`
+   (or a Web Worker to avoid blocking the render loop).
+5. Add a **Schematic / Live** toggle — Schematic keeps the current exaggerated
+   shells and animated dots; Live switches to true-scale positions.
+
+**Effort estimate:** ~half a day of focused work.
+
+**Key decision point:** In "Live" mode the shells appear at true altitude
+(Shell A at 1.094 scene units, not 1.42) — much thinner bands. The schematic
+view remains the primary visual for the bifurcation explanation; Live mode is
+a "wow" moment to show actual congestion matching the engine's numbers.
+
+**Pre-conditions before starting:**
+- June 1 demo content is otherwise locked (this is additive, won't break anything)
+- Decide whether Live mode uses the backend TLE endpoint or hits Celestrak directly
+  from the browser (CORS headers on Celestrak allow direct browser fetches)

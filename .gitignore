@@ -25,3 +25,16 @@ env/
 .vscode/
 .idea/
 *.pdf
+
+# Large media / presentation files
+*.mp4
+*.mov
+*.avi
+*.png
+*.jpg
+*.jpeg
+*.docx
+
+# Credentials (never commit)
+.env
+*.env
